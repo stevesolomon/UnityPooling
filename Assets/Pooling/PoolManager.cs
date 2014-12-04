@@ -9,13 +9,13 @@ public class PoolManager : MonoBehaviour {
 	public List<PooledPrefabEntry> pooledPrefabs; 
 
 	private Dictionary<string, PrefabPool> pools;
-	
-	// Use this for initialization
-	void Start () {
-		if (pooledPrefabs == null) 
-			pooledPrefabs = new List<PooledPrefabEntry>();
 
+	void Awake() 
+	{
 		pools = new Dictionary<string, PrefabPool>();
+
+		if (pooledPrefabs == null)
+			pooledPrefabs = new List<PooledPrefabEntry>();
 
 		BuildPools();
 	}
@@ -54,5 +54,16 @@ public class PoolManager : MonoBehaviour {
 		}
 		
 		return pools[prefabName].Spawn();
+	}
+
+	public void DespawnObject(GameObject gameObject) 
+	{
+		if (!pools.ContainsKey(gameObject.name))
+		{
+			Debug.LogWarning(String.Format("GameObject with name {0} is not managed by this PoolManager and cannot be despawned!", gameObject.name));
+			return;
+		}
+
+		pools[gameObject.name].Despawn(gameObject);
 	}
 }
